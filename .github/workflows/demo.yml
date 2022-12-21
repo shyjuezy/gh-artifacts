@@ -1,0 +1,59 @@
+name: Deploy website
+on:
+  push:
+    branches:
+      - main
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v3
+      - name: Install dependencies
+        run: npm ci
+      - name: Lint code
+        run: npm run lint
+      - name: Test code
+        run: npm run test
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    outputs:
+      index-file-name: ${{ steps.get-index-file-name.outputs.filename }}
+    steps:
+      - name: Get code
+        uses: actions/checkout@v3
+      - name: Install dependencies
+        run: npm ci
+      - name: Build website
+        run: npm run build
+      # publish the index file name - Old way
+      # - name: Get index file name
+      #   id: get-index-file-name
+      #   run: echo "::set-output name=filename::$(ls dist/index.*.js)"
+       # publish the index file name in GITHUB_OUTPUT
+      - name: Get index file name
+        id: get-index-file-name
+        run: basename dist/index.*.js >> $GITHUB_OUTPUT
+      # upload the build directory as an artifact
+      - name: Upload build
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-artifacts
+          path: dist
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download build
+        uses: actions/download-artifact@v3
+        with:
+          name: build-artifacts
+      # get the output of artifacts
+      - name: Output Contents
+        run: ls
+      - name: Get index file name
+        id: get-index-file-name
+        run: echo "{{ needs.build.outputs.index-file-name }}"
+      - name: Deploy
+        run: echo "Deploying..."
