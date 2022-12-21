@@ -31,16 +31,16 @@ jobs:
       # - name: Get index file name
       #   id: get-index-file-name
       #   run: echo "::set-output name=filename::$(ls dist/index.*.js)"
-       # publish the index file name in GITHUB_OUTPUT
-      - name: Get index file name
-        id: get-index-file-name
-        run: basename dist/index.*.js >> $GITHUB_OUTPUT
       # upload the build directory as an artifact
       - name: Upload build
         uses: actions/upload-artifact@v2
         with:
           name: build-artifacts
           path: dist
+      # publish the index file name in GITHUB_OUTPUT
+      - name: Get index file name
+        id: get-index-file-name
+        run: basename dist/assets/index.*.js >> $GITHUB_OUTPUT
   deploy:
     needs: build
     runs-on: ubuntu-latest
