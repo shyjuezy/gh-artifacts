@@ -19,7 +19,7 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     outputs:
-      index-file-name: ${{ steps.get-index-file-name.outputs.filename }}
+      output-filename: ${{ steps.get-index-file-name.outputs.index-file-name }}
     steps:
       - name: Get code
         uses: actions/checkout@v3
@@ -54,6 +54,6 @@ jobs:
         run: ls
       - name: Get index file name
         id: get-index-file-name
-        run: echo "{{ needs.build.outputs.index-file-name }}"
+        run: echo "{{ needs.build.outputs.output-filename }}"
       - name: Deploy
         run: echo "Deploying..."
