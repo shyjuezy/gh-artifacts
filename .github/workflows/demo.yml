@@ -40,7 +40,7 @@ jobs:
       # publish the index file name in GITHUB_OUTPUT
       - name: Get index file name
         id: get-index-file-name
-        run: echo "index-file-name=$(basename assets/index.*.js)" >> $GITHUB_OUTPUT
+        run: echo "index-file-name=$(basename dist/assets/index.*.js)" >> $GITHUB_OUTPUT
   deploy:
     needs: build
     runs-on: ubuntu-latest
